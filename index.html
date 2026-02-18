@@ -22,6 +22,34 @@
         .risk-free-box { border: 4px solid #8B0000; background-color: #172554; color: #fff; }
     </style>
 </head>
+    <style>
+    /* Şifre girilene kadar tüm site içeriğini gizler */
+    body { display: none; }
+</style>
+
+<script>
+    (function() {
+        // Şifrenizi buraya belirleyin
+        var password = "12345"; 
+        
+        // Kullanıcıya gösterilecek mesaj (British English)
+        var input = prompt("Please enter the password to view this page:");
+
+        if (input === password) {
+            // Şifre doğruysa sayfa içeriğini görünür yap
+            // DOM tamamen yüklendiğinde body stilini değiştirir
+            document.addEventListener("DOMContentLoaded", function() {
+                document.body.style.display = "block";
+            });
+            // Eğer script body sonunda ise direkt çalışması için:
+            if(document.body) { document.body.style.display = "block"; }
+        } else {
+            // Şifre yanlışsa uyarı ver ve sayfayı yenile
+            alert("Incorrect password. Access denied.");
+            window.location.href = "about:blank"; // Veya location.reload(); ile döngüye sokabilirsiniz
+        }
+    })();
+</script>
 <body style="font-family: 'Inter', sans-serif;" class="bg-white text-gray-900">
 
     <!-- Top announcement bar -->
