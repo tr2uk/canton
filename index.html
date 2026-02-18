@@ -1,361 +1,235 @@
 <!DOCTYPE html>
-<html lang="en-GB">
+<html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Voice of Canton | Strategic Proposal</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;500;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <title>Kaizen Team Analytics Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
     <style>
-        :root {
-            --canton-red: #E60000;
-            --canton-navy: #001f3f;
-            --canton-black: #111;
-            --canton-gray: #f4f4f4;
-            --white: #ffffff;
-        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; margin: 0; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
         
-        body { font-family: 'Roboto', sans-serif; margin: 0; padding: 0; background-color: var(--canton-gray); color: #333; }
-        h1, h2, h3, h4 { font-family: 'Oswald', sans-serif; text-transform: uppercase; }
+        /* Başlıklar */
+        h1 { color: #2c3e50; border-bottom: 2px solid #ddd; padding-bottom: 15px; }
+        h2 { color: #34495e; margin-top: 50px; border-left: 5px solid #3498db; padding-left: 10px; }
+        .sub-title { font-size: 0.9em; color: #7f8c8d; margin-top: -15px; margin-bottom: 20px; display: block;}
 
-        /* HEADER */
-        header {
-            background-color: var(--canton-black); color: var(--white); padding: 15px 30px;
-            display: flex; justify-content: space-between; align-items: center;
-            position: sticky; top: 0; z-index: 1000; border-bottom: 4px solid var(--canton-red);
-        }
-        .logo-img { height: 50px; } 
+        /* Kart Yapısı */
+        .dashboard-row { display: flex; gap: 20px; margin-bottom: 25px; flex-wrap: wrap; }
+        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); flex: 1; min-width: 320px; }
         
-        .brand-title { font-family: 'Oswald', sans-serif; font-size: 2rem; font-weight: 700; line-height: 1; text-align: right; }
-        .brand-voice { color: #4fa3ff; }
-        .brand-of { color: var(--white); font-weight: 300; font-size: 1.5rem; }
-        .brand-canton { color: var(--canton-red); }
-        .author-credit { font-size: 0.8rem; color: #ccc; margin-top: 5px; font-weight: 300; text-align: right; letter-spacing: 0.5px;}
+        /* Özel Kartlar */
+        .winner-card { border: 1px solid #f1c40f; background: linear-gradient(to bottom right, #fff, #fffcf0); }
+        .leader-card { border-left: 5px solid #2ecc71; }
+        
+        .stat-number { font-size: 2.2em; font-weight: 800; color: #2c3e50; }
+        .stat-label { color: #7f8c8d; font-size: 0.9em; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* HERO SECTION */
-        .hero {
-            /* Arka plana martial arts texturesi ekledim */
-            background: linear-gradient(rgba(0,31,63,0.9), rgba(0,0,0,0.8)), url('big_logo.jpg');
-            background-size: cover; background-position: center; height: 60vh;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            text-align: center; color: white; padding: 20px;
-        }
-        .hero h1 { font-size: 3.5rem; margin-bottom: 10px; letter-spacing: 2px; text-shadow: 0 4px 10px rgba(0,0,0,0.5); }
-        .hero p { font-size: 1.2rem; max-width: 800px; font-weight: 300; line-height: 1.6; }
-        .btn {
-            background-color: var(--canton-red); color: white; padding: 15px 40px;
-            text-decoration: none; font-weight: bold; border-radius: 5px; margin-top: 25px;
-            display: inline-block; transition: 0.3s; border: none; cursor: pointer; font-size: 1rem;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
-        .btn:hover { background-color: white; color: var(--canton-red); }
+        /* Tablo Stili (Quality Ranking) */
+        .ranking-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .ranking-table th { text-align: left; color: #7f8c8d; font-weight: 600; padding: 8px; border-bottom: 1px solid #eee; }
+        .ranking-table td { padding: 10px 8px; border-bottom: 1px solid #f4f4f4; color: #2c3e50; }
+        /* İlk sıradaki takımı vurgula */
+        .ranking-table tbody tr:first-child td { font-weight: bold; color: #d35400; } 
+        .points-badge { background: #eef2f3; padding: 4px 10px; border-radius: 10px; font-weight: bold; }
 
-        /* DOJO LOGOS GRID */
-        .dojo-grid {
-            display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;
-            padding: 30px 20px; background: white; margin-top: -40px; 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1); max-width: 1100px; margin-left: auto; margin-right: auto;
-            border-radius: 10px; position: relative; z-index: 10;
-        }
-        .dojo-item { text-align: center; width: 140px; }
-        .dojo-item img { width: 100%; height: auto; transition: 0.3s; filter: grayscale(100%); opacity: 0.8; }
-        .dojo-item img:hover { filter: grayscale(0%); opacity: 1; transform: scale(1.05); }
-        .dojo-name { display: block; font-size: 0.75rem; font-weight: bold; margin-top: 5px; color: #555; }
+        canvas { max-height: 350px; width: 100%; }
 
-        /* SECTIONS */
-        section { padding: 70px 20px; max-width: 1200px; margin: 0 auto; }
-        .section-title { text-align: center; font-size: 2.5rem; margin-bottom: 20px; color: var(--canton-black); position: relative; }
-        .section-title::after { content: ''; display: block; width: 80px; height: 4px; background: var(--canton-red); margin: 15px auto; }
-
-        /* KAIZEN TEAM SECTION */
-        .kaizen-container {
-            display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; margin-top: 40px;
+        /* Footer */
+        .footer {
+            text-align: center; margin-top: 60px; padding: 30px;
+            color: #95a5a6; font-size: 0.9em; border-top: 1px solid #e1e4e8;
         }
-        .kaizen-card {
-            background: white; border-radius: 10px; padding: 30px; width: 250px; text-align: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-top: 5px solid #555; transition: 0.3s;
-        }
-        .kaizen-card:hover { transform: translateY(-5px); border-color: var(--canton-red); }
-        .k-role { font-size: 0.9rem; text-transform: uppercase; color: #888; letter-spacing: 1px; margin-bottom: 10px; }
-        .k-name { font-family: 'Oswald', sans-serif; font-size: 1.4rem; color: var(--canton-navy); margin-bottom: 5px; }
-        .k-icon { font-size: 2rem; color: var(--canton-red); margin-bottom: 15px; }
-
-        /* PATCH DESIGN (Realistic CSS) */
-        .patch-display {
-            background: #fff; padding: 40px; border-radius: 10px; text-align: center;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1); margin-top: 30px;
-        }
-        .patch-preview { display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; margin-top: 20px; }
-        
-        .patch {
-            /* Kumaş Dokusu Efekti */
-            background-color: #f0f0f0;
-            background-image: repeating-linear-gradient(45deg, transparent, transparent 1px, rgba(0,0,0,0.05) 1px, rgba(0,0,0,0.05) 2px);
-            display: flex; align-items: center; justify-content: center; flex-direction: column; 
-            text-align: center; font-family: 'Oswald', sans-serif; 
-            box-shadow: 4px 4px 8px rgba(0,0,0,0.3), inset 0 0 20px rgba(0,0,0,0.1);
-            position: relative;
-        }
-        /* Dikiş Efekti */
-        .patch::after {
-            content: ''; position: absolute; top: 5px; left: 5px; right: 5px; bottom: 5px;
-            border: 2px dashed rgba(255,255,255,0.6); pointer-events: none;
-        }
-        
-        .patch-round { 
-            width: 140px; height: 140px; border-radius: 50%; 
-            border: 6px solid var(--canton-navy); 
-            background: radial-gradient(circle, #fff 40%, #f4f4f4 100%);
-        }
-        .patch-square { 
-            width: 160px; height: 140px; border-radius: 8px; 
-            border: 6px solid var(--canton-navy); 
-            background: #fff;
-        }
-        
-        .p-voice { color: var(--canton-navy); font-weight: 700; font-size: 1.6rem; line-height: 1; letter-spacing: 1px; text-shadow: 1px 1px 0px rgba(0,0,0,0.1); }
-        .p-of { color: #888; font-weight: 300; font-size: 1rem; margin: 4px 0; font-family: 'Roboto', serif; font-style: italic;}
-        .p-canton { color: var(--canton-red); font-weight: 700; font-size: 2rem; line-height: 1; letter-spacing: 1px; text-shadow: 1px 1px 0px rgba(0,0,0,0.1); }
-
-        /* DEMO & FORM */
-        .demo-container { display: flex; flex-wrap: wrap; gap: 40px; background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        .form-side, .visual-side { flex: 1; min-width: 300px; }
-        
-        label { font-weight: bold; display: block; margin-bottom: 5px; color: #555; font-size: 0.9rem;}
-        select, textarea, input[type="text"] { width: 100%; padding: 12px; margin-bottom: 20px; border: 2px solid #eee; border-radius: 5px; font-family: inherit; font-size: 1rem; background: #fff;}
-        
-        /* STATUS BOX */
-        .status-box {
-            background: linear-gradient(to right, #fff3cd, #fff); border-left: 5px solid #ffc107;
-            padding: 30px; border-radius: 5px; margin-top: 60px; text-align: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-        }
-        
-        footer { background: var(--canton-navy); color: #ccc; text-align: center; padding: 40px; margin-top: 50px; font-size: 0.9rem;}
+        .footer strong { color: #2c3e50; }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="logo-img">
-            <img src="logo.png" alt="Canton MA Logo" style="height: 100%;">
-        </div>
-        <div class="header-text">
-            <div class="brand-title">
-                <span class="brand-voice">VOICE</span> <span class="brand-of">of</span> <span class="brand-canton">CANTON</span>
-            </div>
-            <div class="author-credit">
-                Volunteer Project Proposal by<br>
-                <strong style="color:white; font-size: 1rem;">Assoc. Prof. Dr. Cetin Karakaya</strong>
-            </div>
-        </div>
-    </header>
+<div class="container">
+    <h1>📊 Kaizen Team Analytics</h1>
 
-    <section class="hero">
-        <h1>ONE CLUB. ONE VOICE.</h1>
-        <p>
-            Applying the Japanese philosophy of <strong>"Kaizen"</strong> (Continuous Improvement) to our Dojo operations.
-            A centralised system to listen, improve, and grow.
-        </p>
-        <a href="#demo" class="btn">TRY THE CONCEPT DEMO</a>
-    </section>
+    <h2>📅 Ocak 2026 - Kaizen Süreç Raporu</h2>
+    <span class="sub-title">Genel inovasyon ve sorun bildirim istatistikleri (Tüm Lokasyonlar)</span>
+    
+    <div class="dashboard-row">
+        <div class="card leader-card">
+            <h3>🏆 Ayın Kaizen Lideri</h3>
+            <p>En çok gelişim fikri sunan:</p>
+            <div id="topDojoName" class="stat-number">-</div>
+            <div class="stat-label">Toplam Başvuru: <span id="topDojoCount">0</span></div>
+        </div>
 
-    <div class="dojo-grid">
-        <div class="dojo-item"><img src="hastings_bexhill.jpg" alt="Hastings & Bexhill"><span class="dojo-name">Hastings & Bexhill</span></div>
-        <div class="dojo-item"><img src="eastbourne.jpg" alt="Eastbourne"><span class="dojo-name">Eastbourne</span></div>
-        <div class="dojo-item"><img src="ashford.jpg" alt="Ashford"><span class="dojo-name">Ashford</span></div>
-        <div class="dojo-item"><img src="canterbury.jpg" alt="Canterbury"><span class="dojo-name">Canterbury</span></div>
-        <div class="dojo-item"><img src="folkstone.jpg" alt="Folkestone"><span class="dojo-name">Folkestone</span></div>
-        <div class="dojo-item"><img src="tunbridge_wells.jpg" alt="Tunbridge Wells"><span class="dojo-name">Tunbridge Wells</span></div>
+        <div class="card">
+            <h3>💡 Fikir vs. Sorun Oranı</h3>
+            <canvas id="kaizenTypeChart"></canvas>
+        </div>
     </div>
 
-    <section id="kaizen">
-        <h2 class="section-title">THE KAIZEN TEAM</h2>
-        <p style="text-align: center; max-width: 700px; margin: 0 auto; color: #555;">
-            "Kaizen" (改善) means continuous improvement. This proposed structure ensures that every suggestion is analyzed, authorised, and implemented effectively.
-        </p>
+    <div class="dashboard-row">
+        <div class="card">
+            <h3>📍 Lokasyon Bazlı Kaizen Katılımı</h3>
+            <canvas id="kaizenBarChart"></canvas>
+        </div>
+    </div>
+
+
+    <h2>🥋 Kent Open Karate Championships</h2>
+    <span class="sub-title">18 October 2025 - Results & Quality Ranking</span>
+    
+    <div class="dashboard-row">
         
-        <div class="kaizen-container">
-            <div class="kaizen-card">
-                <i class="fas fa-brain k-icon"></i>
-                <div class="k-role">Innovation Lead</div>
-                <div class="k-name">Assoc. Prof. Dr. Cetin Karakaya</div>
-                <p style="font-size:0.85rem; color:#666;">Data Analysis, Reporting & System Maintenance</p>
-            </div>
-
-            <div class="kaizen-card" style="border-top-color: var(--canton-red);">
-                <i class="fas fa-gavel k-icon"></i>
-                <div class="k-role">Executive Sponsor</div>
-                <div class="k-name">Shihan Kigen (Richard Canton)</div>
-                <p style="font-size:0.85rem; color:#666;">Final Approval & Strategic Direction</p>
-            </div>
-
-            <div class="kaizen-card">
-                <i class="fas fa-fist-raised k-icon"></i>
-                <div class="k-role">Operational Lead</div>
-                <div class="k-name">Doshi Luca Hale-Stretton</div>
-                <p style="font-size:0.85rem; color:#666;">Dojo Implementation & Instructor Coordination</p>
-            </div>
-
-            <div class="kaizen-card">
-                <i class="fas fa-shield-alt k-icon"></i>
-                <div class="k-role">Welfare Officer</div>
-                <div class="k-name">Claire Canton</div>
-                <p style="font-size:0.85rem; color:#666;">Safeguarding Compliance & Oversight</p>
-            </div>
+        <div class="card">
+            <h3>🥇 Medal Distribution by Dojo</h3>
+            <canvas id="medalChart"></canvas>
         </div>
-    </section>
 
-    <section id="strategy" style="background-color: #f9f9f9;">
-        <h2 class="section-title">THE VISUAL IDENTITY</h2>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
-            
-            <div class="patch-display">
-                <h3 style="color: var(--canton-navy); margin-top:0;"><i class="fas fa-tag"></i> Official Member Patch</h3>
-                <p>Designed to be velcro-backed for easy application to Gi collars or Kit Bags.</p>
-                
-                <div class="patch-preview">
-                    <div class="patch patch-round">
-                        <div class="p-voice">VOICE</div>
-                        <div class="p-of">of</div>
-                        <div class="p-canton">CANTON</div>
-                    </div>
-                    <div class="patch patch-square">
-                        <div class="p-voice">VOICE</div>
-                        <div class="p-of">of</div>
-                        <div class="p-canton">CANTON</div>
-                    </div>
-                </div>
-                <p style="font-size: 0.8rem; color: #888; margin-top:15px;">*Digital rendering of embroidered texture</p>
-            </div>
-
-            <div style="background: white; padding: 40px; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); display:flex; flex-direction: column; justify-content: center;">
-                <h3 style="color: var(--canton-navy);"><i class="fas fa-tasks"></i> Why "Kaizen"?</h3>
-                <p style="line-height: 1.6; color: #555;">
-                    In Martial Arts, we strive for perfection in every technique. Our club management should be no different. 
-                    The <strong>Voice of Canton</strong> portal is the digital dojo for our operations.
-                </p>
-                <ul style="margin-top: 20px; line-height: 2;">
-                    <li><i class="fas fa-check" style="color: var(--canton-red);"></i> <strong>Listen:</strong> Centralised feedback.</li>
-                    <li><i class="fas fa-check" style="color: var(--canton-red);"></i> <strong>Improve:</strong> Data-driven decisions.</li>
-                    <li><i class="fas fa-check" style="color: var(--canton-red);"></i> <strong>Empower:</strong> Giving students a voice.</li>
-                </ul>
-            </div>
+        <div class="card winner-card">
+            <h3>🎖 Quality Ranking (Points System)</h3>
+            <p style="font-size:0.8em; color:#666;">(First=3pts, Second=2pts, Third=1pt)</p>
+            <table class="ranking-table" id="rankingTable">
+                <thead>
+                    <tr>
+                        <th>Dojo</th>
+                        <th>Total Points</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    </tbody>
+            </table>
         </div>
-    </section>
+    </div>
 
-    <section id="demo">
-        <h2 class="section-title">INTERACTIVE PORTAL DEMO</h2>
-        <div class="demo-container">
-            <div class="form-side">
-                <form id="innovationForm" onsubmit="handleForm(event)">
-                    <label>Select Dojo</label>
-                    <select id="dojoSelect">
-                        <option value="Hastings">Hastings & Bexhill</option>
-                        <option value="Eastbourne">Eastbourne</option>
-                        <option value="Ashford">Ashford</option>
-                        <option value="Canterbury">Canterbury</option>
-                        <option value="Tunbridge Wells">Tunbridge Wells</option>
-                    </select>
+    <div class="footer">
+        &copy; 2026 Kaizen Team Analytics<br>
+        Prepared by <strong>Assoc. Prof. Dr Cetin Karakaya</strong>
+    </div>
 
-                    <label>Category</label>
-                    <select id="categorySelect" onchange="updateRecipient()">
-                        <option value="" disabled selected>Select a topic...</option>
-                        <option value="finance">💰 Financial Hardship (Confidential)</option>
-                        <option value="safeguarding">🛡️ Safeguarding Issue</option>
-                        <option value="idea">💡 Kaizen Idea / Suggestion</option>
-                        <option value="gear">🥋 Equipment Feedback</option>
-                    </select>
+</div>
 
-                    <label>Recipient (Auto-Routed Logic)</label>
-                    <select id="recipientSelect">
-                        <option value="office">General Office</option>
-                        <option value="Denise Hardy">Denise Hardy (Finance)</option>
-                        <option value="Claire Canton">Claire Canton (Safeguarding)</option>
-                        <option value="Kaizen Team">Kaizen Team (Review Board)</option>
-                    </select>
-                    <div id="lockMessage" style="font-size: 0.85rem; color: var(--canton-red); display:none; margin-bottom: 15px; background: #ffe6e6; padding: 5px; border-radius: 4px;"></div>
+<script>
+    // ==========================================
+    // 1. VERİ SETLERİ
+    // ==========================================
 
-                    <label>Message</label>
-                    <textarea id="messageBody" rows="3" placeholder="Enter details..." required></textarea>
-                    <button type="submit" class="btn" style="width: 100%; margin-top: 10px;">SUBMIT TO KAIZEN TEAM</button>
-                </form>
-                
-                <div id="aiResponse" style="background: #e3f2fd; padding: 15px; margin-top: 15px; display:none; border-left: 4px solid var(--canton-navy); border-radius: 4px;">
-                    <h4 id="responseTitle" style="margin:0; color: var(--canton-navy);"></h4>
-                    <p id="responseText" style="font-size: 0.9rem; margin: 5px 0;"></p>
-                </div>
-            </div>
+    // A) KAİZEN VERİLERİ (Ocak 2026 - Simülasyon)
+    // 7 Lokasyon
+    const kaizenData = {
+        "Hastings": 14,
+        "Bexhill": 8,
+        "Eastbourne": 6,
+        "Ashford": 11,
+        "Canterbury": 9,
+        "Folkestone": 5,
+        "Tunbridge Wells": 12 
+    };
 
-            <div class="visual-side">
-                <h3 style="text-align: center;">LIVE DATA (CONCEPT)</h3>
-                <div style="height: 250px;">
-                    <canvas id="medalChart"></canvas>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="status">
-        <div class="status-box">
-            <h3><i class="fas fa-clipboard-list"></i> NEXT STEPS: KICK-OFF MEETING</h3>
-            <p>To discuss feasibility, privacy protocols, and the scope of the 1-Month Pilot.</p>
-        </div>
-    </section>
-
-    <footer>
-        <p style="font-size: 1.1rem; color: white;">&copy; 2026 Voice of Canton Proposal.</p>
-        <p style="opacity: 0.7;">Developed by <strong>Assoc. Prof. Dr. Cetin Karakaya</strong></p>
-    </footer>
-
-    <script>
-        function updateRecipient() {
-            const cat = document.getElementById('categorySelect').value;
-            const rec = document.getElementById('recipientSelect');
-            const msg = document.getElementById('lockMessage');
-            rec.disabled = false; msg.style.display = 'none';
-
-            if(cat === 'finance') { 
-                rec.value = "Denise Hardy"; rec.disabled = true; msg.style.display = 'block'; 
-                msg.innerHTML = "<i class='fas fa-lock'></i> Locked to Admin & Finance."; 
-            }
-            else if(cat === 'safeguarding') { 
-                rec.value = "Claire Canton"; rec.disabled = true; msg.style.display = 'block'; 
-                msg.innerHTML = "<i class='fas fa-user-shield'></i> Locked to Safeguarding Officer."; 
-            }
-            else if(cat === 'idea') {
-                rec.value = "Kaizen Team";
+    // B) TURNUVA VERİLERİ (Görselden Birebir Alındı)
+    // Sıralama: Gold, Silver, Bronze, Points
+    const tournamentResults = [
+        { dojo: "Hastings",   gold: 15, silver: 7,  bronze: 17, points: 76 },
+        { dojo: "Ashford",    gold: 14, silver: 10, bronze: 11, points: 73 }, 
+        { dojo: "Eastbourne", gold: 10, silver: 14, bronze: 6,  points: 64 },
+        { dojo: "Canterbury", gold: 6,  silver: 11, bronze: 1,  points: 18 }, 
+        { dojo: "Folkestone", gold: 4,  silver: 7,  bronze: 6,  points: 32 }  
+    ];
+    
+    // ==========================================
+    // 2. KAİZEN LİDERLİK HESAPLAMASI
+    // ==========================================
+    function findTopDojo(data) {
+        let maxVal = 0;
+        let maxKey = "";
+        for (const [key, val] of Object.entries(data)) {
+            if (val > maxVal) {
+                maxVal = val;
+                maxKey = key;
             }
         }
+        return { name: maxKey, count: maxVal };
+    }
+    const topDojo = findTopDojo(kaizenData);
+    document.getElementById('topDojoName').innerText = topDojo.name;
+    document.getElementById('topDojoCount').innerText = topDojo.count;
 
-        function handleForm(e) {
-            e.preventDefault();
-            const btn = e.target.querySelector('button');
-            const box = document.getElementById('aiResponse');
-            const title = document.getElementById('responseTitle');
-            const txt = document.getElementById('responseText');
-            
-            btn.innerHTML = 'PROCESSING...';
-            setTimeout(() => {
-                btn.innerHTML = 'SUBMITTED';
-                box.style.display = 'block';
-                title.innerText = "✅ Logged for Kaizen Review";
-                txt.innerHTML = "Your input has been securely sent to the selected recipient.";
-            }, 1000);
+
+    // ==========================================
+    // 3. GRAFİKLER
+    // ==========================================
+
+    // --- Grafik 1: Kaizen Katılımı (Bar Chart) ---
+    new Chart(document.getElementById('kaizenBarChart'), {
+        type: 'bar',
+        data: {
+            labels: Object.keys(kaizenData),
+            datasets: [{
+                label: 'Kaizen Başvurusu',
+                data: Object.values(kaizenData),
+                backgroundColor: '#3498db',
+                borderRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true } }
         }
+    });
 
-        document.addEventListener('DOMContentLoaded', function() {
-            new Chart(document.getElementById('medalChart'), {
-                type: 'bar',
-                data: {
-                    labels: ['Hastings', 'Ashford', 'Eastbourne', 'Canterbury', 'Folkestone'],
-                    datasets: [{ label: 'Total Medals', data: [39, 35, 30, 18, 17], backgroundColor: '#E60000' }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-            });
-        });
-    </script>
+    // --- Grafik 2: Fikir vs Sorun (Doughnut) ---
+    new Chart(document.getElementById('kaizenTypeChart'), {
+        type: 'doughnut',
+        data: {
+            labels: ["Yeni Fikir / Tavsiye", "Sorun / Şikayet"],
+            datasets: [{
+                data: [65, 35], // Örnek oran
+                backgroundColor: ['#2ecc71', '#e74c3c']
+            }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+    });
+
+    // --- Grafik 3: TURNUVA MADALYA DAĞILIMI (Stacked Bar) ---
+    const tLabels = tournamentResults.map(t => t.dojo);
+    const tGold = tournamentResults.map(t => t.gold);
+    const tSilver = tournamentResults.map(t => t.silver);
+    const tBronze = tournamentResults.map(t => t.bronze);
+
+    new Chart(document.getElementById('medalChart'), {
+        type: 'bar',
+        data: {
+            labels: tLabels,
+            datasets: [
+                { label: 'Gold (1st)', data: tGold, backgroundColor: '#FFD700' },
+                { label: 'Silver (2nd)', data: tSilver, backgroundColor: '#C0C0C0' },
+                { label: 'Bronze (3rd)', data: tBronze, backgroundColor: '#CD7F32' }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: { stacked: true },
+                y: { stacked: true, beginAtZero: true }
+            }
+        }
+    });
+
+    // ==========================================
+    // 4. TABLO OLUŞTURMA (Quality Ranking)
+    // ==========================================
+    
+    // Veriyi Puana göre sırala (Büyükten küçüğe)
+    const sortedResults = [...tournamentResults].sort((a, b) => b.points - a.points);
+    
+    const tableBody = document.querySelector('#rankingTable tbody');
+    sortedResults.forEach(item => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${item.dojo}</td>
+            <td><span class="points-badge">${item.points}</span></td>
+        `;
+        tableBody.appendChild(row);
+    });
+
+</script>
+
 </body>
 </html>
