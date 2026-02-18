@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canton Voice | Innovation Proposal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;500;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        :root {
+            --canton-red: #E60000;
+            --canton-black: #111;
+            --canton-gray: #f4f4f4;
+            --white: #ffffff;
+            --success: #28a745;
+            --warning: #ffc107;
+        }
+        
+        body { font-family: 'Roboto', sans-serif; margin: 0; padding: 0; background-color: var(--canton-gray); color: #333; }
+        h1, h2, h3, h4 { font-family: 'Oswald', sans-serif; text-transform: uppercase; }
+
+        /* HEADER */
+        header {
+            background-color: var(--canton-black); color: var(--white); padding: 15px 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 1000; border-bottom: 4px solid var(--canton-red);
+        }
+        .logo-container img { height: 50px; } /* Ana logo boyutu */
+        .header-text { text-align: right; }
+        .header-text span { font-size: 0.8rem; opacity: 0.8; display: block;}
+
+        /* HERO SECTION */
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1555597673-b21d5c935865?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
+            background-size: cover; background-position: center; height: 65vh;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; color: white; padding: 20px;
+        }
+        .hero h1 { font-size: 3rem; margin-bottom: 10px; letter-spacing: 2px; }
+        .hero p { font-size: 1.2rem; max-width: 800px; line-height: 1.6; }
+        .btn {
+            background-color: var(--canton-red); color: white; padding: 15px 40px;
+            text-decoration: none; font-weight: bold; border-radius: 50px; margin-top: 25px;
+            display: inline-block; transition: 0.3s; border: none; cursor: pointer; font-size: 1rem;
+            box-shadow: 0 4px 15px rgba(230, 0, 0, 0.4);
+        }
+        .btn:hover { background-color: #cc0000; transform: translateY(-3px); }
+
+        /* DOJO LOGOS GRID */
+        .dojo-grid {
+            display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;
+            padding: 20px; background: white; margin-top: -50px; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1); max-width: 1000px; margin-left: auto; margin-right: auto;
+            border-radius: 10px; position: relative; z-index: 10;
+        }
+        .dojo-item img { height: 80px; width: auto; transition: 0.3s; filter: grayscale(100%); opacity: 0.7; }
+        .dojo-item img:hover { filter: grayscale(0%); opacity: 1; transform: scale(1.1); }
+
+        /* SECTIONS */
+        section { padding: 60px 20px; max-width: 1200px; margin: 0 auto; }
+        .section-title { text-align: center; font-size: 2.2rem; margin-bottom: 40px; color: var(--canton-black); position: relative; }
+        .section-title::after { content: ''; display: block; width: 60px; height: 4px; background: var(--canton-red); margin: 10px auto; }
+
+        /* DEMO CONTAINER */
+        .demo-container {
+            display: flex; flex-wrap: wrap; gap: 40px; background: white; padding: 40px;
+            border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .form-side, .visual-side { flex: 1; min-width: 300px; }
+
+        /* FORM ELEMENTS */
+        label { font-weight: bold; display: block; margin-bottom: 5px; color: #555; }
+        select, textarea, input[type="text"] {
+            width: 100%; padding: 12px; margin-bottom: 20px; border: 2px solid #eee;
+            border-radius: 8px; font-family: inherit; font-size: 1rem; transition: 0.3s;
+        }
+        select:focus, textarea:focus { border-color: var(--canton-red); outline: none; }
+
+        /* AI RESPONSE */
+        .ai-response {
+            background-color: #f8f9fa; border-left: 5px solid var(--canton-red);
+            padding: 20px; margin-top: 20px; display: none; border-radius: 0 8px 8px 0;
+            animation: slideIn 0.5s ease-out;
+        }
+        @keyframes slideIn { from { transform: translateX(-20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        /* PILOT PROPOSAL BOX */
+        .pilot-box {
+            background: linear-gradient(135deg, #111 0%, #333 100%);
+            color: white; padding: 40px; border-radius: 15px; text-align: center;
+            position: relative; overflow: hidden;
+            border: 2px solid var(--canton-red);
+        }
+        .pilot-badge {
+            position: absolute; top: 20px; right: -35px; background: var(--canton-red);
+            color: white; padding: 5px 40px; transform: rotate(45deg); font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+
+        /* ANALYTICS CHARTS */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+        }
+        .chart-box {
+            background: white; padding: 20px; border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        footer { background: var(--canton-black); color: #888; text-align: center; padding: 30px; margin-top: 50px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-container">
+            <img src="logo_main.webp" alt="Canton Martial Arts Logo">
+        </div>
+        <div class="header-text">
+            <h3 style="margin:0; color:white;">CANTON <span style="color:var(--canton-red)">VOICE</span></h3>
+            <span>Volunteer Project by Cetin Karakaya</span>
+        </div>
+    </header>
+
+    <section class="hero">
+        <h1>THE FUTURE OF OUR DOJOS</h1>
+        <p>
+            Bridging the gap between tradition and innovation. A centralised system to listen to our students, 
+            improve retention, and optimise club revenue.
+        </p>
+        <a href="#demo" class="btn">TRY THE LIVE DEMO</a>
+    </section>
+
+    <div class="dojo-grid">
+        <div class="dojo-item" title="Hastings & Bexhill"><img src="logo_hastings.jpg" alt="Hastings"></div>
+        <div class="dojo-item" title="Eastbourne"><img src="logo_eastbourne.jpg" alt="Eastbourne"></div>
+        <div class="dojo-item" title="Ashford"><img src="logo_ashford.jpg" alt="Ashford"></div>
+        <div class="dojo-item" title="Canterbury"><img src="logo_canterbury.jpg" alt="Canterbury"></div>
+        <div class="dojo-item" title="Folkestone"><img src="logo_folkestone.jpg" alt="Folkestone"></div>
+        <div class="dojo-item" title="Tunbridge Wells"><img src="logo_tunbridge.jpg" alt="Tunbridge"></div>
+    </div>
+
+    <section id="strategy">
+        <h2 class="section-title">STRATEGIC OBJECTIVES</h2>
+        <div class="analytics-grid">
+            <div class="chart-box" style="border-left: 5px solid var(--canton-red);">
+                <h3><i class="fas fa-exclamation-circle"></i> Current Challenges</h3>
+                <ul style="line-height: 1.8;">
+                    <li><strong>Manual Forms:</strong> Paper entries for tournaments (e.g., Kent Open) are inefficient and prone to data loss.</li>
+                    <li><strong>Uniform Issues:</strong> Standard Gi sizes often don't fit, leading students to buy non-branded gear externally. Lost revenue.</li>
+                    <li><strong>Hidden Churn:</strong> Students facing financial hardship leave silently because asking for help is difficult.</li>
+                </ul>
+            </div>
+            <div class="chart-box" style="border-left: 5px solid var(--success);">
+                <h3><i class="fas fa-check-circle"></i> Proposed Solutions</h3>
+                <ul style="line-height: 1.8;">
+                    <li><strong>The "Patch Model":</strong> Allow students to buy high-quality WKF gear anywhere, but mandate a <strong>"Canton Official Patch"</strong>. High margin, zero stock risk.</li>
+                    <li><strong>Discreet Support:</strong> A digital "Financial Assistance" channel to retain students during tough times.</li>
+                    <li><strong>Centralised Feedback:</strong> AI-assisted categorisation of issues, delivered to the right person instantly.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section id="demo">
+        <h2 class="section-title">INTERACTIVE MEMBER PORTAL (DEMO)</h2>
+        <div class="demo-container">
+            
+            <div class="form-side">
+                <div style="background: #e3f2fd; color: #0d47a1; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 0.9rem;">
+                    <i class="fas fa-mobile-alt"></i> This form simulates a module integrated into the Spark Member App.
+                </div>
+
+                <form id="innovationForm" onsubmit="handleForm(event)">
+                    <label>Select Your Dojo</label>
+                    <select id="dojoSelect">
+                        <option value="Hastings">Hastings (Doshi Luca)</option>
+                        <option value="Eastbourne">Eastbourne (Shihan Kigen)</option>
+                        <option value="Ashford">Ashford (Sensei Lisa)</option>
+                        <option value="Canterbury">Canterbury (Sensei Richard)</option>
+                        <option value="Bexhill">Bexhill</option>
+                        <option value="Tunbridge Wells">Tunbridge Wells</option>
+                    </select>
+
+                    <label>Category / Topic</label>
+                    <select id="categorySelect" onchange="checkCategory()">
+                        <option value="" disabled selected>Please select a topic...</option>
+                        <option value="finance">💰 Financial Hardship / Payment Support</option>
+                        <option value="gear">🥋 Uniform & Equipment (Quality/Fit)</option>
+                        <option value="class">🎓 Class Quality & Curriculum</option>
+                        <option value="hygiene">🧹 Dojo Hygiene & Facilities</option>
+                        <option value="tournament">🏆 Tournament Registration (Kent Open)</option>
+                        <option value="complaint">⚠️ Complaint / Issue</option>
+                        <option value="suggestion">💡 Innovation / Idea</option>
+                        <option value="other">📝 Other Enquiries</option>
+                    </select>
+
+                    <div id="financeNote" style="display:none; color: #d32f2f; font-size: 0.9rem; margin-bottom: 15px;">
+                        <i class="fas fa-lock"></i> <strong>Privacy Notice:</strong> This request is encrypted and sent ONLY to Club Management. Instructors will not see this.
+                    </div>
+
+                    <label>Message / Details</label>
+                    <textarea id="messageBody" rows="4" placeholder="Please describe your enquiry or suggestion..." required></textarea>
+                    
+                    <div style="margin-bottom: 20px; display: flex; align-items: center;">
+                        <input type="checkbox" id="anon" style="width: auto; margin-right: 10px; margin-bottom: 0;"> 
+                        <label for="anon" style="margin-bottom: 0; cursor: pointer;">Submit Anonymously</label>
+                    </div>
+
+                    <button type="submit" class="btn" style="width: 100%; margin-top: 0;">SUBMIT REQUEST</button>
+                </form>
+
+                <div id="aiResponse" class="ai-response">
+                    <h4 id="responseTitle" style="margin-top:0; color: var(--canton-red);"></h4>
+                    <p id="responseText"></p>
+                    <div style="font-size: 0.85rem; color: #666; border-top: 1px solid #ddd; padding-top: 10px; margin-top: 10px;">
+                        <i class="fas fa-ticket-alt"></i> Ticket Ref: #CNTN-2026-<span id="ticketNo"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="visual-side">
+                <h3 style="text-align: center;">LIVE ANALYTICS DASHBOARD</h3>
+                <p style="text-align: center; font-size: 0.9rem; color:#666; margin-bottom:20px;">
+                    Simulated view for Club Management based on real data.
+                </p>
+
+                <div style="height: 250px; margin-bottom: 30px;">
+                    <canvas id="medalChart"></canvas>
+                </div>
+
+                <div style="height: 200px;">
+                    <canvas id="pointsChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="proposal">
+        <div class="pilot-box">
+            <div class="pilot-badge">RISK FREE</div>
+            <i class="fas fa-handshake" style="font-size: 3rem; color: var(--canton-red); margin-bottom: 20px;"></i>
+            <h2>1-MONTH PILOT PROGRAMME PROPOSAL</h2>
+            <p style="font-size: 1.1rem; max-width: 700px; margin: 0 auto 30px auto;">
+                This initiative requires zero financial investment from Canton Martial Arts.
+                All software setup, data analysis, and weekly reporting will be managed by 
+                <strong>Cetin Karakaya</strong> as a <strong>Volunteer Innovation Manager</strong>.
+            </p>
+            
+            <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+                <div style="background: rgba(255,255,255,0.1); padding: 15px 30px; border-radius: 50px;">
+                    <i class="fas fa-check-circle" style="color: #4caf50;"></i> Zero Setup Cost
+                </div>
+                <div style="background: rgba(255,255,255,0.1); padding: 15px 30px; border-radius: 50px;">
+                    <i class="fas fa-check-circle" style="color: #4caf50;"></i> Integrated via Link
+                </div>
+                <div style="background: rgba(255,255,255,0.1); padding: 15px 30px; border-radius: 50px;">
+                    <i class="fas fa-check-circle" style="color: #4caf50;"></i> Cancel Anytime
+                </div>
+            </div>
+            
+            <div style="margin-top: 30px; font-size: 0.9rem; opacity: 0.8;">
+                *After the 1-month trial, we will review the data (student retention, feedback quality) to decide on continuation.
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 Canton Martial Arts Proposal. Created by Cetin Karakaya (Brown/Red Belt).</p>
+    </footer>
+
+    <script>
+        // --- 1. Form Logic ---
+        function checkCategory() {
+            const cat = document.getElementById('categorySelect').value;
+            const note = document.getElementById('financeNote');
+            if(cat === 'finance') {
+                note.style.display = 'block';
+            } else {
+                note.style.display = 'none';
+            }
+        }
+
+        function handleForm(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            const responseDiv = document.getElementById('aiResponse');
+            const title = document.getElementById('responseTitle');
+            const text = document.getElementById('responseText');
+            const ticket = document.getElementById('ticketNo');
+            
+            const category = document.getElementById('categorySelect').value;
+            const dojo = document.getElementById('dojoSelect').value;
+
+            // Loading State
+            const originalText = btn.innerText;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PROCESSING...';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fas fa-check"></i> SUBMITTED';
+                btn.style.backgroundColor = '#28a745';
+                responseDiv.style.display = 'block';
+                ticket.innerText = Math.floor(1000 + Math.random() * 9000);
+
+                // Custom Responses based on British English context
+                let responseMsg = "";
+                let responseHeader = "";
+
+                switch(category) {
+                    case 'finance':
+                        responseHeader = "🔒 Confidential Request Received";
+                        responseMsg = `Dear Member, your request for payment support has been <strong>encrypted</strong> and sent directly to Club Management. Your local Dojo instructors will not see this. We will contact you privately to discuss options.`;
+                        break;
+                    case 'complaint':
+                    case 'class':
+                    case 'hygiene':
+                        responseHeader = "⚠️ Priority Alert Sent";
+                        responseMsg = `An automated alert has been sent to the Head Instructor of <strong>${dojo}</strong>. This issue has been logged for the weekly Quality Assurance report.`;
+                        break;
+                    case 'gear':
+                        responseHeader = "🥋 Equipment Feedback Logged";
+                        responseMsg = `Thank you. Your feedback regarding uniform fit/quality has been added to our "Patch Model" business case. We are working on a solution to allow more comfortable, brand-neutral equipment.`;
+                        break;
+                    case 'tournament':
+                        responseHeader = "🏆 Tournament Pre-Registration";
+                        responseMsg = `You have been added to the provisional list for <strong>Kent Open 2026</strong>. Please await payment details via the Member App.`;
+                        break;
+                    default:
+                        responseHeader = "✅ Suggestion Received";
+                        responseMsg = `Your idea has been added to the Innovation Pool. Thank you for helping us build a better Canton Martial Arts.`;
+                }
+
+                title.innerHTML = responseHeader;
+                text.innerHTML = responseMsg;
+
+                // Reset Button after 4 seconds
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                    btn.style.backgroundColor = '#E60000';
+                }, 4000);
+
+            }, 1500);
+        }
+
+        // --- 2. Chart.js Data Visualisation ---
+        document.addEventListener('DOMContentLoaded', function() {
+            // Data from your uploaded image (Kent Open 2025 Stats)
+            
+            // Chart 1: Medals
+            const ctx1 = document.getElementById('medalChart').getContext('2d');
+            new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: ['Hastings', 'Ashford', 'Eastbourne', 'Canterbury', 'Folkestone'],
+                    datasets: [{
+                        label: 'Total Medals (Kent Open)',
+                        data: [39, 35, 30, 18, 17],
+                        backgroundColor: ['#E60000', '#111', '#111', '#111', '#111']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false }, title: { display: true, text: 'Total Medals Won by Dojo' } }
+                }
+            });
+
+            // Chart 2: Quality Points
+            const ctx2 = document.getElementById('pointsChart').getContext('2d');
+            new Chart(ctx2, {
+                type: 'line',
+                data: {
+                    labels: ['Hastings', 'Ashford', 'Eastbourne', 'Canterbury', 'Folkestone'],
+                    datasets: [{
+                        label: 'Quality Ranking Points',
+                        data: [76, 73, 64, 41, 32],
+                        borderColor: '#E60000',
+                        backgroundColor: 'rgba(230, 0, 0, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false }, title: { display: true, text: 'Quality Ranking (Points System)' } },
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
