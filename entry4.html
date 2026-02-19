@@ -711,6 +711,15 @@
 </div>
 
 <script>
+  // Şifre Koruması
+  let pass = prompt("Please enter the password to view this form:");
+  if (pass !== "voiceofcanton") {
+    document.body.innerHTML = "<div style='text-align:center; margin-top:100px; font-family:sans-serif; color:#1a2744;'><h2>Access Denied</h2><p>Incorrect password.</p></div>";
+    throw new Error("Incorrect password");
+  }
+
+  // Belt → Division mapping
+  // (Kodun geri kalanı buradan itibaren devam edecek...)
   // Belt → Division mapping
   const beltDivMap = {
     'White':'Beginner','Red':'Beginner','Yellow':'Beginner','Orange':'Beginner',
